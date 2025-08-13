@@ -259,7 +259,7 @@ const Invoices: React.FC = () => {
           </Link>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+        <div className="bg-white shadow overflow-visible sm:rounded-md">
           <ul className="divide-y divide-gray-200">
             {invoices.map((invoice) => (
               <li key={invoice.id} className="px-6 py-4">
@@ -326,7 +326,7 @@ const Invoices: React.FC = () => {
                           Download
                         </a>
                         {/* Tooltip */}
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                           <div className="font-medium">{invoice.fileName}</div>
                           <div className="text-gray-300 text-xs mt-1 max-w-xs truncate">{getDownloadUrl(invoice)}</div>
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>

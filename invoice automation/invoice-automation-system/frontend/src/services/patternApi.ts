@@ -6,7 +6,8 @@ import {
   PatternCategory, 
   PatternTestRequest,
   PatternTestResult,
-  PatternStats 
+  PatternStats,
+  BackendPatternRequest 
 } from '../types/pattern';
 import { ApiError } from '../types';
 
@@ -69,13 +70,51 @@ export const patternService = {
 
   // Create new pattern
   createPattern: async (pattern: PatternRequest): Promise<PatternResponse> => {
-    const response: AxiosResponse<PatternResponse> = await patternApi.post('/admin/patterns', pattern);
+    // Auto-detect flags needed for complex patterns
+    let patternFlags = '';
+    if (pattern.regexPattern.includes('(?<=') || pattern.regexPattern.includes('(?=') || pattern.regexPattern.includes('[\\s\\S]')) {
+      patternFlags = 'MULTILINE,DOTALL';
+    } else if (pattern.category.includes('AMOUNT')) {
+      patternFlags = 'CASE_INSENSITIVE';
+    }
+    
+    // Transform frontend request to backend format
+    const backendRequest: BackendPatternRequest = {
+      patternName: pattern.name,
+      patternDescription: pattern.description,
+      patternCategory: pattern.category,
+      patternRegex: pattern.regexPattern,
+      patternPriority: pattern.priority,
+      confidenceWeight: 75, // Default confidence weight
+      isActive: pattern.isActive,
+      patternFlags: patternFlags || undefined,
+      dateFormat: pattern.category.includes('DATE') ? 'yyyy-MM-dd' : undefined,
+      notes: `Extraction field: ${pattern.extractionField}`
+    };
+    
+    const response: AxiosResponse<PatternResponse> = await patternApi.post('/admin/patterns', backendRequest);
     return response.data;
   },
 
   // Update existing pattern
   updatePattern: async (id: string, pattern: Partial<PatternRequest>): Promise<PatternResponse> => {
-    const response: AxiosResponse<PatternResponse> = await patternApi.put(`/admin/patterns/${id}`, pattern);
+    // Transform frontend request to backend format
+    const backendRequest: Partial<BackendPatternRequest> = {};
+    
+    if (pattern.name !== undefined) backendRequest.patternName = pattern.name;
+    if (pattern.description !== undefined) backendRequest.patternDescription = pattern.description;
+    if (pattern.category !== undefined) backendRequest.patternCategory = pattern.category;
+    if (pattern.regexPattern !== undefined) backendRequest.patternRegex = pattern.regexPattern;
+    if (pattern.priority !== undefined) backendRequest.patternPriority = pattern.priority;
+    if (pattern.isActive !== undefined) backendRequest.isActive = pattern.isActive;
+    if (pattern.extractionField !== undefined) backendRequest.notes = `Extraction field: ${pattern.extractionField}`;
+    
+    // Set confidence weight if not provided
+    if (pattern.priority !== undefined) {
+      backendRequest.confidenceWeight = Math.min(pattern.priority + 25, 100);
+    }
+    
+    const response: AxiosResponse<PatternResponse> = await patternApi.put(`/admin/patterns/${id}`, backendRequest);
     return response.data;
   },
 
@@ -86,8 +125,40 @@ export const patternService = {
 
   // Test pattern against sample text
   testPattern: async (testRequest: PatternTestRequest): Promise<PatternTestResult> => {
-    const response: AxiosResponse<PatternTestResult> = await patternApi.post('/admin/patterns/test', testRequest);
-    return response.data;
+    // Transform frontend request to backend format
+    const backendRequest = {
+      regex: testRequest.pattern,
+      sampleText: testRequest.sampleText,
+      flags: testRequest.flags || ''
+    };
+    
+    const response: AxiosResponse = await patternApi.post('/admin/patterns/test', backendRequest);
+    
+    // Transform backend response to frontend format
+    const backendResult = response.data;
+    
+    // Debug: Log the exact backend response structure
+    console.log('🔍 PatternApi: Raw backend response:', JSON.stringify(backendResult, null, 2));
+    
+    // Handle the actual backend response format
+    const isValid = backendResult.valid ?? backendResult.isValid ?? false;
+    const hasMatches = backendResult.matches ?? false;
+    const success = isValid && hasMatches;
+    
+    console.log('✅ PatternApi: Transformed - isValid:', isValid, 'hasMatches:', hasMatches, 'success:', success);
+    
+    return {
+      sampleText: testRequest.sampleText,
+      matches: backendResult.matchedText ? [backendResult.matchedText] : [],
+      confidence: success ? 0.9 : 0.0,
+      success: success,
+      isValid: isValid,
+      matchedText: backendResult.matchedText,
+      startIndex: backendResult.startIndex,
+      endIndex: backendResult.endIndex,
+      captureGroups: backendResult.captureGroups,
+      errorMessage: backendResult.errorMessage
+    };
   },
 
   // Get active patterns only

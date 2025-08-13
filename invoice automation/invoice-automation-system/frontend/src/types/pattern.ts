@@ -24,6 +24,13 @@ export interface PatternTestResult {
   matches: string[];
   confidence: number;
   success: boolean;
+  // Additional fields from backend
+  isValid?: boolean;
+  matchedText?: string;
+  startIndex?: number;
+  endIndex?: number;
+  captureGroups?: string[];
+  errorMessage?: string;
 }
 
 export interface PatternRequest {
@@ -35,6 +42,20 @@ export interface PatternRequest {
   isActive: boolean;
   priority: number;
   examples?: string[];
+}
+
+// Backend-compatible request interface
+export interface BackendPatternRequest {
+  patternName: string;
+  patternDescription?: string;
+  patternCategory: string;
+  patternRegex: string;
+  patternPriority: number;
+  confidenceWeight: number;
+  isActive: boolean;
+  patternFlags?: string;
+  dateFormat?: string;
+  notes?: string;
 }
 
 export interface PatternResponse {
@@ -54,6 +75,7 @@ export interface PatternCategory {
 export interface PatternTestRequest {
   pattern: string;
   sampleText: string;
+  flags?: string;
 }
 
 export interface PatternStats {

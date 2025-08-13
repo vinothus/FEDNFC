@@ -218,12 +218,22 @@ public class PatternManagementService {
      */
     public PatternTestResult testPattern(String regex, String sampleText, String flags) {
         log.info("🧪 Testing pattern against sample text");
+        log.info("📝 Pattern: {}", regex.substring(0, Math.min(100, regex.length())) + (regex.length() > 100 ? "..." : ""));
+        log.info("📄 Sample text length: {} characters", sampleText.length());
 
         try {
             // Validate and compile pattern
             validateRegexPattern(regex);
             
             int regexFlags = parsePatternFlags(flags);
+            
+            // For complex patterns with lookbehind/lookahead, automatically add MULTILINE and DOTALL
+            if (regex.contains("(?<=") || regex.contains("(?=") || regex.contains("[\\s\\S]")) {
+                regexFlags |= Pattern.MULTILINE | Pattern.DOTALL;
+                log.info("🔧 Auto-added MULTILINE and DOTALL flags for complex pattern");
+            }
+            
+            log.info("🏁 Compiling pattern with flags: {}", regexFlags);
             Pattern compiledPattern = Pattern.compile(regex, regexFlags);
             
             java.util.regex.Matcher matcher = compiledPattern.matcher(sampleText);
@@ -240,14 +250,23 @@ public class PatternManagementService {
                     result.setStartIndex(matcher.start());
                     result.setEndIndex(matcher.end());
                     
+                    log.info("✅ Match found: '{}' at position {}:{}", 
+                            matcher.group().length() > 50 ? matcher.group().substring(0, 50) + "..." : matcher.group(),
+                            matcher.start(), matcher.end());
+                    
                     // Get capture groups
                     if (matcher.groupCount() > 0) {
                         result.setCaptureGroups(new String[matcher.groupCount()]);
                         for (int i = 1; i <= matcher.groupCount(); i++) {
                             result.getCaptureGroups()[i-1] = matcher.group(i);
+                            log.info("📋 Capture group {}: '{}'", i, 
+                                    matcher.group(i) != null && matcher.group(i).length() > 50 ? 
+                                    matcher.group(i).substring(0, 50) + "..." : matcher.group(i));
                         }
                     }
                 }
+            } else {
+                log.info("❌ No match found for pattern");
             }
 
             log.info("✅ Pattern test completed - matches: {}", result.isMatches());

@@ -11,6 +11,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui';
 import { cn } from '../utils/cn';
+import { ASSETS } from '../utils/paths';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -24,10 +25,10 @@ const Header: React.FC = () => {
   };
 
   const navLinkClass = (path: string): string => {
-    const baseClass = "px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200";
+    const baseClass = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border border-transparent";
     return isActive(path)
-      ? `${baseClass} bg-blue-700 text-white`
-      : `${baseClass} text-gray-300 hover:bg-blue-600 hover:text-white`;
+      ? `${baseClass} bg-red-600 text-white shadow-md border-red-500`
+      : `${baseClass} text-gray-200 hover:bg-red-600 hover:text-white hover:shadow-md hover:border-red-500`;
   };
 
   const handleLogout = async () => {
@@ -61,13 +62,20 @@ const Header: React.FC = () => {
 
 
   return (
-    <header className="bg-blue-800 shadow-md">
+    <header className="bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg border-b-2 border-red-600">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/dashboard" className="text-xl font-bold text-white">
-              Invoice Automation
+          <div className="flex items-center space-x-3">
+            <Link to="/dashboard" className="flex items-center space-x-3">
+              <img 
+                src={ASSETS.MONTRA_LOGO} 
+                alt="Montra Logo" 
+                className="h-16 w-auto drop-shadow-lg logo-glow transition-all duration-300 hover:scale-105"
+              />
+              <span className="text-xl font-bold text-white hover:text-red-400 transition-colors duration-200">
+                Invoice Automation
+              </span>
             </Link>
           </div>
           
@@ -87,7 +95,7 @@ const Header: React.FC = () => {
             {/* Admin Section Separator */}
             {visibleAdminItems.length > 0 && (
               <>
-                <div className="h-6 w-px bg-blue-600 mx-2"></div>
+                <div className="h-6 w-px bg-red-600 mx-3"></div>
                 {visibleAdminItems.map((item) => (
                   <Link
                     key={item.name}
@@ -111,7 +119,7 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
             {/* User Dropdown */}
             <Menu as="div" className="relative">
-              <Menu.Button className="flex items-center space-x-2 text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-800 focus:ring-white rounded-md p-2">
+              <Menu.Button className="flex items-center space-x-2 text-white hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-500 rounded-lg p-3 hover:bg-gray-700 transition-all duration-200">
                 <UserCircleIcon className="h-6 w-6" aria-hidden="true" />
                 <span className="hidden md:block text-sm font-medium">
                   {user?.firstName || user?.username}
@@ -126,11 +134,11 @@ const Header: React.FC = () => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <Menu.Items className="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                   <div className="py-1">
-                    <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                      <p className="font-medium">{user?.firstName || user?.username}</p>
-                      <p className="text-gray-500">{user?.email}</p>
+                    <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+                      <p className="font-medium truncate">{user?.firstName || user?.username}</p>
+                      <p className="text-gray-500 text-xs truncate mt-1" title={user?.email}>{user?.email}</p>
                     </div>
                     
                     {hasRole('ADMIN') && (
@@ -176,7 +184,7 @@ const Header: React.FC = () => {
                 size="sm"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle mobile menu"
-                className="text-white hover:text-gray-200 hover:bg-blue-700"
+                className="text-white hover:text-red-400 hover:bg-gray-700 border border-transparent hover:border-red-500"
               >
                 {mobileMenuOpen ? (
                   <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -191,16 +199,16 @@ const Header: React.FC = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-blue-700">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-red-600 bg-gray-800">
               {visibleNavItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={cn(
                     isActive(item.href)
-                      ? 'bg-blue-700 text-white'
-                      : 'text-gray-300 hover:bg-blue-700 hover:text-white',
-                    'block px-3 py-2 rounded-md text-base font-medium'
+                      ? 'bg-red-600 text-white border border-red-500'
+                      : 'text-gray-200 hover:bg-red-600 hover:text-white border border-transparent hover:border-red-500',
+                    'block px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                   aria-current={isActive(item.href) ? 'page' : undefined}
@@ -212,8 +220,8 @@ const Header: React.FC = () => {
               {/* Mobile Admin Section */}
               {visibleAdminItems.length > 0 && (
                 <>
-                  <div className="border-t border-blue-600 my-2"></div>
-                  <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+                  <div className="border-t border-red-600 my-2"></div>
+                  <div className="px-3 py-2 text-xs font-bold text-red-400 uppercase tracking-wider">
                     Admin
                   </div>
                   {visibleAdminItems.map((item) => (
@@ -222,9 +230,9 @@ const Header: React.FC = () => {
                       to={item.href}
                       className={cn(
                         isActive(item.href)
-                          ? 'bg-blue-700 text-white'
-                          : 'text-gray-300 hover:bg-blue-700 hover:text-white',
-                        'flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium'
+                          ? 'bg-red-600 text-white border border-red-500'
+                          : 'text-gray-200 hover:bg-red-600 hover:text-white border border-transparent hover:border-red-500',
+                        'flex items-center space-x-2 px-3 py-2 rounded-lg text-base font-semibold transition-all duration-200'
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                       aria-current={isActive(item.href) ? 'page' : undefined}

@@ -120,9 +120,16 @@ const PatternForm: React.FC<PatternFormProps> = ({
 
       console.log('🧪 PatternForm: Testing pattern:', { pattern: regexPattern, sampleText: sampleText.substring(0, 100) + '...' });
 
+      // Auto-detect flags needed for complex patterns
+      let flags = '';
+      if (regexPattern.includes('(?<=') || regexPattern.includes('(?=') || regexPattern.includes('[\\s\\S]')) {
+        flags = 'MULTILINE,DOTALL';
+      }
+      
       const testRequest: PatternTestRequest = {
         pattern: regexPattern,
         sampleText: sampleText,
+        flags: flags,
       };
 
       const result = await patternService.testPattern(testRequest);

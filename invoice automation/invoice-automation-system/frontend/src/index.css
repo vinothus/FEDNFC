@@ -15,3 +15,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Custom logo glow effect for Montra branding */
+.logo-glow {
+  filter: 
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)) 
+    drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)) 
+    drop-shadow(0 0 32px rgba(255, 255, 255, 0.2));
+}
+
+.logo-glow:hover {
+  filter: 
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.7)) 
+    drop-shadow(0 0 28px rgba(255, 255, 255, 0.5)) 
+    drop-shadow(0 0 40px rgba(255, 255, 255, 0.3));
+}

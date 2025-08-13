@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Header from './components/Header';
+import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Invoices from './pages/Invoices';
 import Upload from './pages/Upload';
@@ -23,78 +23,57 @@ function App() {
           {/* Protected routes */}
           <Route path="/" element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <Dashboard />
-                </main>
-              </div>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/dashboard" element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <Dashboard />
-                </main>
-              </div>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/invoices" element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <Invoices />
-                </main>
-              </div>
+              <MainLayout>
+                <Invoices />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/upload" element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <Upload />
-                </main>
-              </div>
+              <MainLayout>
+                <Upload />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/patterns" element={
             <ProtectedRoute requiredRoles={['ADMIN']}>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <PatternManagement />
-                </main>
-              </div>
+              <MainLayout>
+                <PatternManagement />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/users" element={
             <ProtectedRoute requiredRoles={['ADMIN']}>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <UserManagement />
-                </main>
-              </div>
+              <MainLayout>
+                <UserManagement />
+              </MainLayout>
             </ProtectedRoute>
           } />
           
           <Route path="/settings" element={
             <ProtectedRoute requiredRoles={['ADMIN']}>
-              <div className="min-h-screen bg-gray-50">
-                <Header />
-                <main className="container mx-auto px-4 py-8">
-                  <Settings />
-                </main>
-              </div>
+              <MainLayout>
+                <Settings />
+              </MainLayout>
             </ProtectedRoute>
           } />
           

@@ -52,12 +52,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCachePeriod(86400); // Cache for 1 day
                 
         // Serve React public assets (favicon, logos, manifest, etc.)
-        registry.addResourceHandler("/favicon.ico", "/manifest.json", "/robots.txt", "/logo192.png", "/logo512.png")
+        registry.addResourceHandler("/favicon.ico", "/manifest.json", "/robots.txt", "/logo192.png", "/logo512.png", 
+                "/montra-logo.svg", "/montra-logo-login.svg", "/montra-logo.jpg", "/favicon-montra.svg", "/logo.svg", "/invoice-icon.svg")
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(86400); // Cache for 1 day
                 
-                        // Fallback handler for other potential static resources
-        registry.addResourceHandler("/*.png", "/*.jpg", "/*.ico", "/*.json", "/*.txt")
+        // Fallback handler for other potential static resources
+        registry.addResourceHandler("/*.png", "/*.jpg", "/*.jpeg", "/*.ico", "/*.json", "/*.txt", "/*.svg")
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(86400); // Cache for 1 day
     }
