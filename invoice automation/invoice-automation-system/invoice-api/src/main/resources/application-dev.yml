@@ -1,0 +1,88 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:invoice_automation_dev;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  flyway:
+    enabled: false # Disable for H2 development
+  
+  mail:
+    host: imap.gmail.com
+    port: 993
+    username: uspanigai@gmail.com
+    password: ddyg jhgs kimc rzwk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  level:
+    com.company.invoice: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+invoice:
+  app:
+    base-url: ${APP_BASE_URL:http://localhost:8080}
+  storage:
+    pdf-directory: ./dev-pdf-storage
+  
+  email:
+    monitoring:
+      enabled: true
+      poll-interval: 120000 # 2 minutes for development
+      days-to-check: 2 # Check emails from last 2 days in development
+  
+  ocr:
+    # Tesseract OCR Configuration for Development
+    tesseract:
+      data-path: ./tesseract-data
+      language: eng
+      dpi: 300
+      timeout-seconds: 120
+      page-seg-mode: 3
+      ocr-engine-mode: 3
+    
+    # Tika Configuration for Development
+    tika:
+      max-string-length: 100000  # 100KB
+      timeout-seconds: 30
+      preserve-alignment: true  # Preserve text alignment and spacing
+    
+    # PDFBox Configuration for Development
+    pdfbox:
+      sort-by-position: true  # Sort text by spatial position
+      preserve-spacing: true  # Convert multiple spaces to tabs
+    
+    # Coordinator Configuration for Development
+    coordinator:
+      min-confidence: 0.6  # Lower threshold for development
+      enable-fallback: true
+      parallel-processing: true
+      timeout-minutes: 5
+  
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+      allow-credentials: false
